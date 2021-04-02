@@ -50,7 +50,6 @@
 }
 
 .coin-categories {
-    position: sticky;
     display: flex;
     flex-direction: row;
     justify-content: start;
@@ -77,11 +76,17 @@
 }
 
 .categories-marketcap {
-    width: 240px;
+    width: 200px;
 }
 
 .categories-percent {
-    width: 80px;
+    width: 100px;
+    display: flex;
+    cursor: pointer;
+}
+
+.categories-percent:hover {
+    transform: scale(1.1);
 }
 
 .coin-button {
@@ -90,4 +95,7 @@
     top: 20px;
     right: 120px;
     font-size: 16px;
+}
+
+.categories-click {
 }

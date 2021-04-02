@@ -2,12 +2,15 @@ import './App.css';
 import axios from 'axios';
 import { useEffect,useState } from 'react';
 import Coin from './components/Coin/Coin';
+import TrendingUpIcon from '@material-ui/icons/TrendingUp';
+import TrendingDownIcon from '@material-ui/icons/TrendingDown';
 
 function App() {
 
   const [coins, setCoins] = useState([])
   const [search, setSearch] = useState('')
   const [money, setMoney] = useState(['eur','€'])
+  const [sortState, setSortState] = useState ({'number' : 'desc'})
   
   useEffect(()=>{
     axios.get(
@@ -15,7 +18,6 @@ function App() {
     )
     .then((res)=>{
       setCoins(res.data)
-      console.log(coins)
     })
     .catch(error=> console.log(error))
   },[money])
@@ -25,7 +27,7 @@ function App() {
   }
 
   const moneyChange = () => {
-    if(money[0] === 'eur'){
+    if(money[0] == 'eur'){
       setMoney(['usd','$'])
     } else {
       setMoney(['eur','€'])
@@ -33,15 +35,31 @@ function App() {
 
   }
 
-
-  const filteredCoins = coins.filter(coin => 
+  let filteredCoins = coins.filter(coin => 
     coin.name.toLowerCase().includes(search.toLocaleLowerCase())
     )
+
+    const numberSort = () => {
+      if (sortState.number ==='desc'){
+        const sorted = [...coins].sort((a,b)=>
+        b.price_change_percentage_24h - a.price_change_percentage_24h )
+        setSortState({number:'asc'})
+        setCoins(sorted)
+      }
+      else 
+      {
+        const sorted = [...coins].sort((a,b)=>
+        a.price_change_percentage_24h - b.price_change_percentage_24h )
+        setSortState({number:'desc'})
+        setCoins(sorted)
+      }
+  }
+
 
   return (
     <div className="coin-app">
       <div>
-        <button className="coin-button" onClick={moneyChange}>{money[0] === 'eur'? '$ - USD' : ' ‎€ - EURO'}</button>
+        <button className="coin-button" onClick={moneyChange}>{money[1]+money[0].toUpperCase()}</button>
       </div>
       <div className="coin-search">
         <h1 className="coin-text">Search a currency</h1>
@@ -61,8 +79,9 @@ function App() {
         <div className="coin-data">
           <p className="categories-price">Price</p>
           <p className="categories-volume">Volume</p>
-          <p className="categories-percent">Last 24h</p>
-          <p className="categories-marketcap">Market Cap</p>
+          <p className="categories-percent" onClick={numberSort} >Last 24h 
+            {sortState.number === 'desc' ?<TrendingUpIcon className="categories-click" /> : <TrendingDownIcon/>}</p>
+          <p className="categories-marketcap" onClick={numberSort}>Market Cap</p>
         </div>
       </div>
       {filteredCoins.map(coin => {
