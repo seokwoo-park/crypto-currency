@@ -69,6 +69,9 @@
 
 .categories-price {
     width: 110px;
+    display: flex;
+    justify-content: center;
+    cursor: pointer;
 }
 
 .categories-volume {
@@ -82,10 +85,12 @@
 .categories-percent {
     width: 100px;
     display: flex;
+    justify-content: center;
     cursor: pointer;
 }
 
-.categories-percent:hover {
+.categories-price :hover,
+.categories-percent :hover {
     transform: scale(1.1);
 }
 
@@ -95,7 +100,4 @@
     top: 20px;
     right: 120px;
     font-size: 16px;
-}
-
-.categories-click {
 }

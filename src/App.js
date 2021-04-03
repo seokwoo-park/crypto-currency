@@ -2,15 +2,14 @@ import './App.css';
 import axios from 'axios';
 import { useEffect,useState } from 'react';
 import Coin from './components/Coin/Coin';
-import TrendingUpIcon from '@material-ui/icons/TrendingUp';
-import TrendingDownIcon from '@material-ui/icons/TrendingDown';
+import ImportExportIcon from '@material-ui/icons/ImportExport';
 
 function App() {
 
   const [coins, setCoins] = useState([])
   const [search, setSearch] = useState('')
   const [money, setMoney] = useState(['eur','€'])
-  const [sortState, setSortState] = useState ({'number' : 'desc'})
+  const [sortState, setSortState] = useState ({ priceChange : 'desc', price : 'desc' })
   
   useEffect(()=>{
     axios.get(
@@ -39,20 +38,37 @@ function App() {
     coin.name.toLowerCase().includes(search.toLocaleLowerCase())
     )
 
-    const numberSort = () => {
-      if (sortState.number ==='desc'){
+    const priceChangeSort = () => {
+      if (sortState.priceChange ==='desc'){
         const sorted = [...coins].sort((a,b)=>
         b.price_change_percentage_24h - a.price_change_percentage_24h )
-        setSortState({number:'asc'})
+        setSortState({...sortState,priceChange:'asc'})
         setCoins(sorted)
       }
       else 
       {
         const sorted = [...coins].sort((a,b)=>
         a.price_change_percentage_24h - b.price_change_percentage_24h )
-        setSortState({number:'desc'})
+        setSortState({...sortState,priceChange:'desc'})
         setCoins(sorted)
       }
+  }
+
+  const priceSort = () => {
+    if (sortState.price ==='desc'){
+      const sorted = [...coins].sort((a,b)=>
+      b.current_price - a.current_price )
+      setSortState({...sortState,price:'asc'})
+      setCoins(sorted)
+    }
+    else 
+    {
+      const sorted = [...coins].sort((a,b)=>
+      a.current_price - b.current_price )
+      setSortState({...sortState,price:'desc'})
+      setCoins(sorted)
+
+    }
   }
 
 
@@ -63,7 +79,7 @@ function App() {
       </div>
       <div className="coin-search">
         <h1 className="coin-text">Search a currency</h1>
-        <form>
+        <form onSubmit={(e)=>e.preventDefault()}>
           <input 
           type="text" 
           placeholder="Search ex) Bitcoin"
@@ -77,11 +93,12 @@ function App() {
           <p className="categories-symbol">Symbol</p>
         </div>
         <div className="coin-data">
-          <p className="categories-price">Price</p>
+          <p className="categories-price" onClick={priceSort}>Price
+          <ImportExportIcon className="categories-click" /></p>
           <p className="categories-volume">Volume</p>
-          <p className="categories-percent" onClick={numberSort} >Last 24h 
-            {sortState.number === 'desc' ?<TrendingUpIcon className="categories-click" /> : <TrendingDownIcon/>}</p>
-          <p className="categories-marketcap" onClick={numberSort}>Market Cap</p>
+          <p className="categories-percent" onClick={priceChangeSort} >Last 24h 
+          <ImportExportIcon className="categories-click" /></p>
+          <p className="categories-marketcap">Market Cap</p>
         </div>
       </div>
       {filteredCoins.map(coin => {
